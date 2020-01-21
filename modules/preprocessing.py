@@ -16,7 +16,7 @@ def read_txt_data():
     file_path = "../static/upload_file/test.txt"
     with open(file_path, encoding="utf-8_sig") as f:
         texts = f.read()
-        print(texts)
+        # print(texts)
 
     return texts
 
@@ -66,14 +66,23 @@ def write_words(_id, date, words, voc_arr, count_arr):
         print("success writing to %s" % wc_file_path)
 
 
-def create_array(_id, dates, articles):
-    for i, article in enumerate(articles):
-        words_count, words = counter(article)
-        voc_arr = list(words_count.keys())
-        count_arr = list(words_count.values())
+def create_array(article):
+    print("Starting explode to vocabulary...")
+    _article = ""
+    for i in article:
+        _article += i
 
-        # csv書き出し
-        # write_words(int(_id[i]), dates[i], words, voc_arr, count_arr)
+    t = Tokenizer()
+    words_count = defaultdict(int)
+    words = ""
+    tokens = t.tokenize(_article)
+    for token in tokens:
+        pos = token.part_of_speech.split(',')[0]
+        if pos == '名詞':
+            words_count[token.base_form] += 1
+            words += token.base_form
+            words += ","
+    return words
 
 
 def start():
@@ -81,11 +90,12 @@ def start():
     # テキストの読み込み
     texts = read_txt_data()
     # 除外リストの読み込み
-    # exclude_words = read_exclude_words()
+    exclude_words = read_exclude_words()
     # リスト内の文字列を除外
-    # articles = exclude_keywords.do_exclude(texts, exclude_words)
+    articles = exclude_keywords.do_exclude(texts, exclude_words)
     # 単語に分解
-    # create_array(ids, dates, articles)
+    words = create_array(articles)
+    print(words)
     # ワードクラウド作成
 
 
