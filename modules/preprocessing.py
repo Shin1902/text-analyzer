@@ -1,3 +1,6 @@
+# coding: utf-8
+
+
 import pandas as pd
 from janome.tokenizer import Tokenizer
 from collections import Counter, defaultdict
@@ -10,12 +13,12 @@ import exclude_keywords
 def read_txt_data():
 
     # 読み込むcsvファイルの設定
-    file_path = "../csv/txt_data.csv"
-    columns = ['id', 'date', 'text']
+    file_path = "../static/upload_file/test.txt"
+    with open(file_path, encoding="utf-8_sig") as f:
+        texts = f.read()
+        print(texts)
 
-    ret_val = read_from_csv.run(file_path, columns)
-
-    return ret_val["id"], ret_val["date"], ret_val["text"]
+    return texts
 
 
 def read_exclude_words():  # 除外するワード
@@ -28,19 +31,6 @@ def read_exclude_words():  # 除外するワード
     return exclude_words
 
 
-def counter(article):
-    print("Starting explode to vocabulary...")
-    t = Tokenizer()
-    words_count = defaultdict(int)
-    words = ""
-    tokens = t.tokenize(article)
-    for token in tokens:
-        pos = token.part_of_speech.split(',')[0]
-        if pos == '名詞':
-            words_count[token.base_form] += 1
-            words += token.base_form
-            words += ","
-    return words_count, words
 
 
 # 出てきた単語を記事ごとに保存
@@ -83,15 +73,20 @@ def create_array(_id, dates, articles):
         count_arr = list(words_count.values())
 
         # csv書き出し
-        write_words(int(_id[i]), dates[i], words, voc_arr, count_arr)
+        # write_words(int(_id[i]), dates[i], words, voc_arr, count_arr)
 
 
 def start():
     print("Preprocessing process start")
-    ids, dates, texts = read_txt_data()
-    exclude_words = read_exclude_words()
-    articles = exclude_keywords.do_exclude(texts, exclude_words)
-    create_array(ids, dates, articles)
+    # テキストの読み込み
+    texts = read_txt_data()
+    # 除外リストの読み込み
+    # exclude_words = read_exclude_words()
+    # リスト内の文字列を除外
+    # articles = exclude_keywords.do_exclude(texts, exclude_words)
+    # 単語に分解
+    # create_array(ids, dates, articles)
+    # ワードクラウド作成
 
 
 if __name__ == "__main__":
