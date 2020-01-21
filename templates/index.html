@@ -1,0 +1,49 @@
+{% extends "layout.html" %} {% block content %}
+<!-- Form
+  ================================================== -->
+
+<!-- ヘッダーココから -->
+<header>
+    <a href="/">
+        <h1>
+            <img id="logo" src="../static/imgs/logo.png" alt="Comet">
+            <span id="app_name">TExt Analyzer</span>
+        </h1>
+    </a>
+</header>
+
+<div id="main_wrapper">
+
+    <!-- レフトここから -->
+    <div id="left">
+        <dl id="page_menu">
+            <dt><a href="/register_page">テキスト解析</a></dt>
+            <dt><a href="/transition">コストデータ推移情報</a></dt>
+            <dt><a href="analyze">コストデータ分析</a></dt>
+        </dl>
+    </div>
+
+    <!-- センターここから -->
+    <div id="center">
+
+        <h2 id="content_title">
+            {% if con_title %} {{ con_title }} {% endif %}
+        </h2>
+
+        <form action="/upload_file" method="POST" class="form-inline" enctype="multipart/form-data">
+            <input type="file" id="uploading_file" name="uploading_file" />
+            <button type="submit" class="btn btn-default">テキスト解析</button>
+        </form>
+
+        <div>
+            {% if message %} {{ message }} {% endif %}
+        </div>        
+
+    </div>
+
+    <div class="clear_float"></div>
+
+</div>
+<!-- フッタ―ここから -->
+<footer>footer</footer>
+{% endblock %}
