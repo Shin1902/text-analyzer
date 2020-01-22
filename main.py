@@ -3,6 +3,8 @@ from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 import numpy as np
 
+from modules import preprocessing
+
 
 # 自身の名称を app という名前でインスタンス化する
 app = Flask(__name__)
@@ -43,9 +45,11 @@ def post():
             # ファイルの一時保存
             _file.save('./static/upload_file/' + filename)
             message = "アップロードが完了しました。"
-            return render_template('index.html', title=title, con_title=con_title, message=message)
+            img_path = preprocessing.start()
+            url = url_for("index", _external=True)
+            path = url + img_path
 
-
+    return render_template('index.html', title=title, con_title=con_title, message=message, img_path=path)
 
 
 if __name__ == '__main__':

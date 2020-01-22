@@ -1,19 +1,21 @@
 # coding: utf-8
 
-
+# ライブラリのインポート
 import pandas as pd
 from janome.tokenizer import Tokenizer
 from collections import Counter, defaultdict
 
-import read_from_csv
-import write_to_csv
-import exclude_keywords
+# 自作APIの読み込み
+from modules import read_from_csv
+from modules import write_to_csv
+from modules import exclude_keywords
+from modules import word_cloud_generator
 
 
 def read_txt_data():
 
     # 読み込むcsvファイルの設定
-    file_path = "../static/upload_file/test.txt"
+    file_path = "./static/upload_file/test.txt"
     with open(file_path, encoding="utf-8_sig") as f:
         texts = f.read()
         # print(texts)
@@ -23,7 +25,7 @@ def read_txt_data():
 
 def read_exclude_words():  # 除外するワード
     # csvから情報取得
-    file_path = "../csv/exclude_words.csv"
+    file_path = "./csv/exclude_words.csv"
     columns = ["exclude_words"]
     ret_val = read_from_csv.run(file_path, columns)
 
@@ -31,11 +33,9 @@ def read_exclude_words():  # 除外するワード
     return exclude_words
 
 
-
-
 # 出てきた単語を記事ごとに保存
 def write_words(_id, date, words, voc_arr, count_arr):
-    file_path = '../csv/words.csv'
+    file_path = './csv/words.csv'
     columns = ['id']
     written_words = read_from_csv.run(file_path, columns)
 
@@ -79,6 +79,7 @@ def create_array(article):
     for token in tokens:
         pos = token.part_of_speech.split(',')[0]
         if pos == '名詞':
+            # if pos == '名詞' or pos == '形容詞' or pos == '動詞':
             words_count[token.base_form] += 1
             words += token.base_form
             words += ","
@@ -86,19 +87,20 @@ def create_array(article):
 
 
 def start():
+    # importLibraries()
     print("Preprocessing process start")
     # テキストの読み込み
     texts = read_txt_data()
     # 除外リストの読み込み
     exclude_words = read_exclude_words()
-    # リスト内の文字列を除外
-    articles = exclude_keywords.do_exclude(texts, exclude_words)
     # 単語に分解
-    words = create_array(articles)
-    print(words)
+    _words = create_array(texts)
+    # リスト内の文字列を除外
+    words = exclude_keywords.do_exclude(_words, exclude_words)
     # ワードクラウド作成
+    word_cloud_generator.genWordCloud(words)
+    return "static/imgs/wordcloud.png"
 
 
 if __name__ == "__main__":
     start()
-
