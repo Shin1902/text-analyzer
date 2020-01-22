@@ -1,13 +1,15 @@
 # Flask などの必要なライブラリをインポートする
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
 import numpy as np
 
 from modules import preprocessing
+from modules import open_text
 
 
 # 自身の名称を app という名前でインスタンス化する
 app = Flask(__name__)
+app.secret_key = "jvodmv;eofg52f5b1d8h6d2d78gh5h8r"
 
 
 # ここからウェブアプリケーション用のルーティングを記述
@@ -15,41 +17,75 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     title = "TEA | Text Analyzer"
-    con_title = "テキスト解析"
-    message = "テキストファイル(.txt)を選択してください。"
+    con_title = "ようこそ"
+    message = "左のメニューから利用したい機能を選択してください。"
 
-    # index.html をレンダリングする
-    return render_template('index.html', message=message, title=title, con_title=con_title)
+    if 'target_file' in session:
+        target_file = session['target_file']
+        text_contents = open_text.run(target_file)
+        return render_template('index.html', title=title, con_title=con_title, message=message, target_file=target_file, text_contents=text_contents)
+    else:
+        return render_template('index.html', message=message, title=title, con_title=con_title)
+
+
+# /* --------------------------------------------------------------
+#   ワードクラウド
+# -------------------------------------------------------------- */
+
+@app.route('/word_cloud')
+def word_cloud_page():
+    title = "TEA | WordCloudの作成"
+    con_title = "ワードクラウド"
+    message = "出現頻度の高いキーワードを強調して表示しています。"
+
+    if 'target_file' in session:
+        print("OK")
+        target_file = session['target_file']
+        img_path = session['wc_img_path']
+        return render_template('word_cloud.html', message=message, title=title, con_title=con_title, target_file=target_file, img_path=img_path)
+    else:
+        return render_template('word_cloud.html', message=message, title=title, con_title=con_title)
 
 
 @app.route('/upload_file', methods=['GET', 'POST'])
 def post():
     title = "TEA | Text Analyzer"
-    con_title = "テキスト解析"
+    con_title = "ようこそ"
 
     if request.method == 'POST':
+        # *****************************************
+        #   アップロードされたファイルを確認
+        # *****************************************
         _file = request.files.get('uploading_file')
         filename = secure_filename(_file.filename)
+        session['target_file'] = filename  # セッションに登録
 
         if filename == "":
-            print("/ *********************************************************")
+            print("/ ---------------------------------------------------------")
             print("Nothing was uploaded")
-            print("********************************************************* /")
+            print("--------------------------------------------------------- /")
             message = "ファイルを指定してください。"
             return render_template('index.html', title=title, con_title=con_title, message=message)
         else:
-            print("/ *********************************************************")
+            print("/ ---------------------------------------------------------")
             print("Uploaded file name: " + filename)
-            print("********************************************************* /")
+            print("--------------------------------------------------------- /")
 
             # ファイルの一時保存
             _file.save('./static/upload_file/' + filename)
             message = "アップロードが完了しました。"
+            
+            # *****************************************
+            #   ワードクラウドを作成
+            # *****************************************
             img_path = preprocessing.start()
             url = url_for("index", _external=True)
             path = url + img_path
+            session['wc_img_path'] = path
 
-    return render_template('index.html', title=title, con_title=con_title, message=message, img_path=path)
+            target_file = filename
+            text_contents = open_text.run(target_file)
+            return render_template('index.html', title=title, con_title=con_title, message=message, target_file=target_file, text_contents=text_contents)
 
 
 if __name__ == '__main__':

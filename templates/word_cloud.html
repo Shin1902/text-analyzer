@@ -1,0 +1,9 @@
+{% extends "layout.html" %}{% block content %}
+
+{% if img_path %}
+<div>
+  <img id="word_cloud_img" src="{{ img_path }}" alt="WordCloud">
+</div>
+{% endif %}
+
+{% endblock %}

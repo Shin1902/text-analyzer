@@ -1,24 +1,25 @@
 @charset 'utf-8';
-
 /* 基本設定 */
 
-html,
-body {
+html, body {
     width: 100%;
     height: 100%;
+    overflow: hidden;
+    font-family: Meiryo, "メイリオ";
 }
 
-
-/* ヘッダーの設定 */
+/* --------------------------------------
+ヘッダーの設定
+-------------------------------------- */
 
 header {
     width: 100%;
     height: 5%;
-    background-color: #B5B5B3;
+    background-color: #0f4c75;
 }
 
 header a {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 header a h1 {
@@ -26,18 +27,17 @@ header a h1 {
 }
 
 h1 img#logo {
+    height: 95%;
+    margin: 2px 10px;
+}
+
+h1 span#app_name {
     height: 100%;
-    margin: 0 10px;
+    font-size: 18px;
+    color: #ffffff;
+    font-weight: bold;
+    margin-top: 0;
 }
-
-h1 span#app_name{
-  height: 100%;
-  font-size: 18px;
-  color: #ffffff;
-  font-weight: bold;
-  margin-top: 0;
-}
-
 
 /* --------------------------------------
  メインエリアの設定
@@ -48,13 +48,12 @@ h1 span#app_name{
     height: 90%;
 }
 
-
 /* 左 */
 
 #left {
-    width: 20%;
+    width: 30%;
     height: 100%;
-    background-color: #6CB7DA;
+    background-color: #bbe1fa;
     display: block;
     float: left;
 }
@@ -77,7 +76,6 @@ dl#page_menu dt:hover {
 
 dl#page_menu dt a {
     text-decoration: none;
-    font-family: Meiryo, "メイリオ";
     color: #4b4b4b;
     font-size: 18px;
     line-height: 34px;
@@ -88,11 +86,64 @@ dl#page_menu dt a:hover {
     color: white;
 }
 
+div#upload_form_area {
+    margin: 20px 0;
+    height: 20%;
+}
 
-/* 中央 */
+div#upload_form_area h4 {
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+label#file_label {
+    width: 40%;
+    background-color: rgb(231, 231, 231);
+    border-radius: 5px;
+    margin: 5px 20px;
+    padding: 7px;
+    font-size: 15px;
+    font-weight: regular;
+}
+
+div#upload_form_area form button {
+    width: 90%;
+    margin: 0 20px;
+    display: block;
+    font-weight: bold;
+}
+
+div#target{
+    margin: 20px;
+    float: right;
+}
+
+span.target_name{
+    font-size: 18px;
+    font-weight: bold;
+}
+
+div#results_menu{
+    margin-top: 80px;
+}
+
+div#results_menu h4{
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+div#results_menu nav{
+    margin-left: 20px;
+}
+
+
+
+/* ----------------------------------------------
+    中央
+ --------------------------------------------- */
 
 div#center {
-    width: 80%;
+    width: 70%;
     height: 100%;
     background-color: white;
     float: left;
@@ -101,24 +152,45 @@ div#center {
 div#center h2#content_title {
     margin-top: 60px;
     font-size: 34px;
-    font-family: Meiryo, "メイリオ";
 }
 
+div#message{
+    width: 40%;
+    margin: 0 30%;
+    font-weight: bold;
+    color: #4b4b4b;
+}
 
-/* フッタ― */
+div#text_contents{
+    height: 60vh;
+    overflow-y: scroll;
+}
+
+/* ---------------------------------------
+    フッタ―
+--------------------------------------- */
 
 footer {
     width: 100%;
     height: 5%;
-    background-color: #61A2DA;
+    background-color: #1b262c;
     position: absolute;
     bottom: 0;
     left: 0;
+    color: #ffffff;
 }
-
 
 /* フロートの解除用CSS */
 
 .clear_float {
     clear: both;
+}
+
+/* --------------------------------------------
+    ワードクラウド作成ページ用のスタイル
+-------------------------------------------- */
+
+img#word_cloud_img {
+    width: 80%;
+    margin: 5% 10%;
 }
