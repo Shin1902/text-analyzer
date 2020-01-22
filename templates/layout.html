@@ -70,8 +70,8 @@
           <dl id="page_menu">
             <dt><a href="/">プレーンデータ</a></dt>
             <dt><a href="/word_cloud">ワードクラウド</a></dt>
-            <dt><a href="/transition">共起ネットワーク</a></dt>
-            <dt><a href="analyze">頻出度</a></dt>
+            <dt><a href="/cooc_net">共起ネットワーク</a></dt>
+            <dt><a href="/">頻出度</a></dt>
           </dl>
         </nav>
       </div>
@@ -88,16 +88,7 @@
         {% if message %} {{ message }} {% endif %}
       </div>
 
-      {% if text_contents %}
-      <div>
-        <span class="target_name">{{ target_file }}</span>
-        <hr>
-        <div id="text_contents">
-            {{ text_contents}}
-        </div>
-        <hr>
-      </div>
-      {% endif %}
+      
 
       <!-- ページに応じて変動するコンテンツ -->
       {% block content %}{% endblock %}

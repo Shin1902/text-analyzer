@@ -1,5 +1,14 @@
 {% extends "layout.html" %} {% block content %}
 
-
+{% if text_contents %}
+<div id="text_contents_area">
+    <span class="target_name">{{ target_file }}</span>
+    <hr>
+    <div id="text_contents">
+        {{ text_contents}}
+    </div>
+    <hr>
+</div>
+{% endif %}
 
 {% endblock %}

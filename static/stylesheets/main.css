@@ -155,15 +155,19 @@ div#center h2#content_title {
 }
 
 div#message{
-    width: 40%;
-    margin: 0 30%;
+    width: 50%;
+    margin: 0 25%;
     font-weight: bold;
     color: #4b4b4b;
 }
 
+div#text_contents_area{
+    margin: 0 15px;
+}
+
 div#text_contents{
     height: 60vh;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 /* ---------------------------------------
@@ -192,5 +196,19 @@ footer {
 
 img#word_cloud_img {
     width: 80%;
+    height: auto;
     margin: 5% 10%;
 }
+
+
+/* --------------------------------------------
+    共起ネットワーク作成ページ用のスタイル
+-------------------------------------------- */
+
+img#cooc_net_img {
+    width: 70%;
+    height: auto;
+    margin: 5% 10%;
+}
+
+

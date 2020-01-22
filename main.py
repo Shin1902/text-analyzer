@@ -41,10 +41,30 @@ def word_cloud_page():
     if 'target_file' in session:
         print("OK")
         target_file = session['target_file']
-        img_path = session['wc_img_path']
-        return render_template('word_cloud.html', message=message, title=title, con_title=con_title, target_file=target_file, img_path=img_path)
+        wc_img_path = session['wc_img_path']
+        return render_template('word_cloud.html', message=message, title=title, con_title=con_title, target_file=target_file, wc_img_path=wc_img_path)
     else:
         return render_template('word_cloud.html', message=message, title=title, con_title=con_title)
+
+
+
+# /* --------------------------------------------------------------
+#   共起ネットワーク
+# -------------------------------------------------------------- */
+
+@app.route('/cooc_net')
+def cooc_net_page():
+    title = "TEA | 共起ネットワークの作成"
+    con_title = "共起ネットワーク"
+    message = "関連するキーワード同士を結んだネットワークです。"
+
+    if 'target_file' in session:
+        print("OK")
+        target_file = session['target_file']
+        co_img_path = session['co_img_path']
+        return render_template('cooc_net.html', message=message, title=title, con_title=con_title, target_file=target_file, co_img_path=co_img_path)
+    else:
+        return render_template('cooc_net.html', message=message, title=title, con_title=con_title)
 
 
 @app.route('/upload_file', methods=['GET', 'POST'])
@@ -80,8 +100,13 @@ def post():
             # *****************************************
             img_path = preprocessing.start()
             url = url_for("index", _external=True)
-            path = url + img_path
-            session['wc_img_path'] = path
+            wc_path = url + img_path[0]
+            co_path = url + img_path[1]
+            print(wc_path)
+            print(co_path)
+
+            session['wc_img_path'] = wc_path
+            session['co_img_path'] = co_path
 
             target_file = filename
             text_contents = open_text.run(target_file)

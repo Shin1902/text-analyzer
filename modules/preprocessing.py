@@ -10,6 +10,7 @@ from modules import read_from_csv
 from modules import write_to_csv
 from modules import exclude_keywords
 from modules import word_cloud_generator
+from modules import cooccurence_network
 
 
 def read_txt_data():
@@ -93,13 +94,31 @@ def start():
     texts = read_txt_data()
     # 除外リストの読み込み
     exclude_words = read_exclude_words()
+
+    # **********************************************************
+    #   ワードクラウドの作成
+    # **********************************************************
+
     # 単語に分解
     _words = create_array(texts)
     # リスト内の文字列を除外
     words = exclude_keywords.do_exclude(_words, exclude_words)
     # ワードクラウド作成
     word_cloud_generator.genWordCloud(words)
-    return "static/imgs/wordcloud.png"
+
+
+    # **********************************************************
+    #   共起ネットワークの作成
+    # **********************************************************
+
+    cooccurence_network.run(texts, exclude_words)
+
+
+    # **********************************************************
+    #   処理完了を知らせるための戻り値を返す
+    # **********************************************************
+
+    return ["static/imgs/wordcloud.png", "static/imgs/cooc_net.png"]
 
 
 if __name__ == "__main__":
