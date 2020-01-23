@@ -2,6 +2,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
 import numpy as np
+import os
 
 from modules import preprocessing
 from modules import open_text
@@ -9,13 +10,28 @@ from modules import barchart
 
 # 自身の名称を app という名前でインスタンス化する
 app = Flask(__name__)
-app.secret_key = "jvodmv;eofg52f5b1d8h6d2d78gh5h8r"
+app.secret_key = os.urandom(64)
 
 
 # ここからウェブアプリケーション用のルーティングを記述
 # index にアクセスしたときの処理
 @app.route('/')
 def index():
+    # title = "TEA | Text Analyzer"
+    # con_title = "ようこそ"
+    # message = "左のメニューから利用したい機能を選択してください。"
+
+    # if 'target_file' in session:
+    #     target_file = session['target_file']
+    #     text_contents = open_text.run(target_file)
+    #     return render_template('index.html', title=title, con_title=con_title, message=message, target_file=target_file, text_contents=text_contents)
+    # else:
+    #     return render_template('index.html', message=message, title=title, con_title=con_title)
+    app.secret_key = os.urandom(64)
+    return redirect('/home')
+
+@app.route('/home')
+def home():
     title = "TEA | Text Analyzer"
     con_title = "ようこそ"
     message = "左のメニューから利用したい機能を選択してください。"
@@ -27,10 +43,10 @@ def index():
     else:
         return render_template('index.html', message=message, title=title, con_title=con_title)
 
-
 # /* --------------------------------------------------------------
 #   ワードクラウド
 # -------------------------------------------------------------- */
+
 
 @app.route('/word_cloud')
 def word_cloud_page():
@@ -44,7 +60,6 @@ def word_cloud_page():
         return render_template('word_cloud.html', message=message, title=title, con_title=con_title, target_file=target_file, wc_img_path=wc_img_path)
     else:
         return render_template('word_cloud.html', message=message, title=title, con_title=con_title)
-
 
 
 # /* --------------------------------------------------------------
@@ -68,6 +83,7 @@ def cooc_net_page():
 #   頻出度
 # -------------------------------------------------------------- */
 
+
 @app.route('/frequent_words')
 def frequent_words():
     title = "TEA | 頻出語句のグラフ表示"
@@ -82,7 +98,6 @@ def frequent_words():
         return render_template('frequent_words.html', message=message, title=title, con_title=con_title, target_file=target_file, plot=bar)
     else:
         return render_template('frequent_words.html', message=message, title=title, con_title=con_title)
-
 
 
 @app.route('/upload_file', methods=['GET', 'POST'])
@@ -112,7 +127,7 @@ def post():
             # ファイルの一時保存
             _file.save('./static/upload_file/' + filename)
             message = "アップロードが完了しました。"
-            
+
             # *****************************************
             #   ワードクラウドを作成
             # *****************************************
@@ -128,10 +143,9 @@ def post():
             with open('./static/settings/graph_data.txt', mode='w') as f:
                 f.write(result_process[2])
 
-
             target_file = filename
             text_contents = open_text.run(target_file)
-            return redirect("/")
+            return redirect("/home")
 
 
 if __name__ == '__main__':
