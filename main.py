@@ -5,7 +5,7 @@ import numpy as np
 
 from modules import preprocessing
 from modules import open_text
-
+from modules import barchart
 
 # 自身の名称を app という名前でインスタンス化する
 app = Flask(__name__)
@@ -39,7 +39,6 @@ def word_cloud_page():
     message = "出現頻度の高いキーワードを強調して表示しています。"
 
     if 'target_file' in session:
-        print("OK")
         target_file = session['target_file']
         wc_img_path = session['wc_img_path']
         return render_template('word_cloud.html', message=message, title=title, con_title=con_title, target_file=target_file, wc_img_path=wc_img_path)
@@ -59,12 +58,31 @@ def cooc_net_page():
     message = "関連するキーワード同士を結んだネットワークです。"
 
     if 'target_file' in session:
-        print("OK")
         target_file = session['target_file']
         co_img_path = session['co_img_path']
         return render_template('cooc_net.html', message=message, title=title, con_title=con_title, target_file=target_file, co_img_path=co_img_path)
     else:
         return render_template('cooc_net.html', message=message, title=title, con_title=con_title)
+
+# /* --------------------------------------------------------------
+#   頻出度
+# -------------------------------------------------------------- */
+
+@app.route('/frequent_words')
+def frequent_words():
+    title = "TEA | 頻出語句のグラフ表示"
+    con_title = "頻出語句のグラフ表示"
+    message = "アップロードしたテキストデータ内の頻出語句をグラフ化したものです。"
+
+    if 'target_file' in session:
+        target_file = session['target_file']
+        with open('./static/settings/graph_data.txt') as f:
+            bar = f.read()
+
+        return render_template('frequent_words.html', message=message, title=title, con_title=con_title, target_file=target_file, plot=bar)
+    else:
+        return render_template('frequent_words.html', message=message, title=title, con_title=con_title)
+
 
 
 @app.route('/upload_file', methods=['GET', 'POST'])
@@ -98,19 +116,22 @@ def post():
             # *****************************************
             #   ワードクラウドを作成
             # *****************************************
-            img_path = preprocessing.start()
+            result_process = preprocessing.start()
             url = url_for("index", _external=True)
-            wc_path = url + img_path[0]
-            co_path = url + img_path[1]
-            print(wc_path)
-            print(co_path)
+            wc_path = url + result_process[0]
+            co_path = url + result_process[1]
 
             session['wc_img_path'] = wc_path
             session['co_img_path'] = co_path
 
+            # グラフ用のデータを保存
+            with open('./static/settings/graph_data.txt', mode='w') as f:
+                f.write(result_process[2])
+
+
             target_file = filename
             text_contents = open_text.run(target_file)
-            return render_template('index.html', title=title, con_title=con_title, message=message, target_file=target_file, text_contents=text_contents)
+            return redirect("/")
 
 
 if __name__ == '__main__':

@@ -7,20 +7,22 @@ from collections import Counter, defaultdict
 
 # 自作APIの読み込み
 from modules import read_from_csv
-from modules import write_to_csv
 from modules import exclude_keywords
+from modules import frequent_words
+from modules import word_count
+from modules import barchart
 from modules import word_cloud_generator
 from modules import cooccurence_network
 
 
 def read_txt_data():
 
-    # 読み込むcsvファイルの設定
+    # 読み込むファイルの設定
     file_path = "./static/upload_file/test.txt"
     with open(file_path, encoding="utf-8_sig") as f:
         texts = f.read()
         # print(texts)
-
+    f.close()
     return texts
 
 
@@ -34,59 +36,6 @@ def read_exclude_words():  # 除外するワード
     return exclude_words
 
 
-# 出てきた単語を記事ごとに保存
-def write_words(_id, date, words, voc_arr, count_arr):
-    file_path = './csv/words.csv'
-    columns = ['id']
-    written_words = read_from_csv.run(file_path, columns)
-
-    storaged_article_id = written_words['id'].reset_index()['index'].tolist()
-
-    if _id in storaged_article_id:
-        print("This article has storaged(id: %d)" % _id)
-    else:
-        # 単語を記録
-        columns = ['id', 'date', 'words']
-        values = [_id, date, words]
-        write_to_csv.write_data(file_path, columns, values)
-
-        # 文字の登場回数を記録
-        for i in range(len(voc_arr)):
-            results = pd.DataFrame(
-                [[_id, date, voc_arr[i],
-                  count_arr[i]]],
-                columns=['id', 'date', 'word', 'count']
-            )
-        # / ************************
-        # wc = word_count
-        # ************************ /
-        wc_file_path = "../csv/words_count.csv"
-        df = pd.read_csv(wc_file_path)
-        df = pd.concat([df, results])
-        df.to_csv(wc_file_path, index=False)
-        print("success writing to %s" % wc_file_path)
-
-
-def create_array(article):
-    print("Starting explode to vocabulary...")
-    _article = ""
-    for i in article:
-        _article += i
-
-    t = Tokenizer()
-    words_count = defaultdict(int)
-    words = ""
-    tokens = t.tokenize(_article)
-    for token in tokens:
-        pos = token.part_of_speech.split(',')[0]
-        if pos == '名詞':
-            # if pos == '名詞' or pos == '形容詞' or pos == '動詞':
-            words_count[token.base_form] += 1
-            words += token.base_form
-            words += ","
-    return words
-
-
 def start():
     # importLibraries()
     print("Preprocessing process start")
@@ -96,29 +45,25 @@ def start():
     exclude_words = read_exclude_words()
 
     # **********************************************************
-    #   ワードクラウドの作成
+    #   文章の前処理
     # **********************************************************
 
-    # 単語に分解
-    _words = create_array(texts)
+    # 形態素解析
+    words = frequent_words.run(texts)
     # リスト内の文字列を除外
-    words = exclude_keywords.do_exclude(_words, exclude_words)
+    processed_words = exclude_keywords.do_exclude(words, exclude_words)
+
+    # 頻出語句のカウント
+    col_count = word_count.run(processed_words)
+    bar = barchart.create_bar_chart(col_count)
     # ワードクラウド作成
-    word_cloud_generator.genWordCloud(words)
+    word_cloud_generator.genWordCloud(processed_words)
 
-
-    # **********************************************************
     #   共起ネットワークの作成
-    # **********************************************************
-
     cooccurence_network.run(texts, exclude_words)
 
-
-    # **********************************************************
     #   処理完了を知らせるための戻り値を返す
-    # **********************************************************
-
-    return ["static/imgs/wordcloud.png", "static/imgs/cooc_net.png"]
+    return ["static/imgs/wordcloud.png", "static/imgs/cooc_net.png", bar]
 
 
 if __name__ == "__main__":
