@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def run(file_path, columns):
-    df = pd.read_csv(file_path)
+    df = pd.read_csv(file_path, encoding="utf-8")
 
     return_value = {}
     for col in columns:

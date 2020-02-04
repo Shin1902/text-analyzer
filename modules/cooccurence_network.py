@@ -32,7 +32,7 @@ mecab.parse('')
 
 def read_txt_data():
     file_path = "./static/upload_file/test.txt"
-    with open(file_path, encoding="utf-8_sig") as f:
+    with open(file_path, encoding="utf-8") as f:
         texts = f.read()
         # print(texts)
 
